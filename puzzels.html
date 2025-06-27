@@ -6,13 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Woordzoeker</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/wordfind"></script>
-  <script src="https://unpkg.com/wordfind/wordfindgame.js"></script>
   <style>
     #puzzle, #words {
-      margin: 20px 0;
+      margin: 20px;
+    }
+    .wordsearch-table td {
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+    .wordsearch-table {
+      border-collapse: collapse;
+    }
+    .wordsearch-table td.found {
+      background-color: #90ee90;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfind.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfindgame.min.js"></script>
 </head>
 <body>
   <header>
@@ -26,9 +39,10 @@
   </main>
   <script>
     const woordenlijst = ['boom', 'fiets', 'school', 'boek', 'zon', 'regen', 'huis', 'deur', 'stoel', 'tafel'];
-    const gamePuzzle = wordfindgame.create({ 
-      grid: null,
-      words: woordenlijst
+    wordfindgame.create({
+      puzzleContainer: document.getElementById('puzzle'),
+      words: woordenlijst,
+      wordListContainer: document.getElementById('words')
     });
   </script>
 </body>
