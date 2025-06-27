@@ -59,6 +59,7 @@ main {
 .woorden { background-color: #ff9800; }
 .schrijven { background-color: #9c27b0; }
 .puzzels { background-color: #e91e63; }
+.klokkijken { background-color: #2196f3; }
 
 input[type="number"] {
   width: 70px;
