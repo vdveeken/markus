@@ -3,6 +3,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rekenen met Markus</title>
   <link rel="stylesheet" href="style.css">
   <script>
@@ -18,6 +19,7 @@
         let som = `${a} ${operator} ${b}`;
 
         let div = document.createElement("div");
+        div.className = "sommetje";
         div.innerHTML = `
           <label>${som} = <input type="number" data-a="${a}" data-b="${b}" data-op="${operator}"></label>
         `;
@@ -47,16 +49,18 @@
 </head>
 <body onload="genereerSommen()">
   <header>
-    <h1>Rekenen met Markus ➕➖✖️</h1>
+    <h1>🧠 Rekenen met Markus</h1>
     <nav>
-      <a href="index.html">Home</a>
-      <a href="rekenen.html">Rekenen</a>
+      <a href="index.html">🏠 Home</a>
+      <a href="rekenen.html">🧮 Rekenen</a>
     </nav>
   </header>
   <main>
-    <p>Los de volgende 10 sommen op. Vul je antwoord in en klik op 'Controleren'.</p>
-    <div id="sommen"></div>
-    <button onclick="controleerAntwoorden()">Controleren</button>
+    <section>
+      <p>Los de volgende <strong>10 sommen</strong> op. Vul je antwoord in en klik op <em>'Controleren'</em>.</p>
+      <div id="sommen"></div>
+      <button onclick="controleerAntwoorden()">✅ Controleren</button>
+    </section>
   </main>
 </body>
 </html>
