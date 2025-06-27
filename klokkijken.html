@@ -1,0 +1,53 @@
+<!-- klokkijken.html -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klokkijken Oefenen</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const tijden = [
+      { digitaal: "03:00", antwoord: "drie uur" },
+      { digitaal: "05:15", antwoord: "kwart over vijf" },
+      { digitaal: "07:30", antwoord: "half acht" },
+      { digitaal: "09:45", antwoord: "kwart voor tien" },
+      { digitaal: "12:00", antwoord: "twaalf uur" },
+      { digitaal: "14:15", antwoord: "kwart over twee" },
+      { digitaal: "16:30", antwoord: "half vijf" },
+      { digitaal: "18:45", antwoord: "kwart voor zeven" },
+      { digitaal: "20:00", antwoord: "acht uur" },
+      { digitaal: "22:30", antwoord: "half elf" }
+    ];
+
+    function controleren() {
+      let goed = 0;
+      for (let i = 0; i < tijden.length; i++) {
+        const input = document.getElementById(`klok${i}`).value.trim().toLowerCase();
+        if (input === tijden[i].antwoord) goed++;
+      }
+      alert(`Je hebt ${goed} van de 10 goed!`);
+    }
+
+    window.addEventListener('load', () => {
+      const container = document.getElementById('klokken');
+      tijden.forEach((tijd, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `${index + 1}. ${tijd.digitaal} = <input type="text" id="klok${index}">`;
+        container.appendChild(div);
+      });
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <h1>🕒 Klokkijken</h1>
+    <nav><a href="index.html">Home</a></nav>
+  </header>
+  <main>
+    <p>Typ de tijd in woorden (zoals "drie uur", "kwart over vijf", "half zes"):</p>
+    <div id="klokken"></div>
+    <button onclick="controleren()">Controleren</button>
+  </main>
+</body>
+</html>
