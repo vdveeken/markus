@@ -33,27 +33,32 @@ main {
   margin: auto;
 }
 
-.intro {
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.blok {
+  padding: 30px;
+  border-radius: 10px;
   text-align: center;
+  font-size: 1.3em;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: transform 0.2s;
 }
 
-.hero {
-  max-width: 100%;
-  height: auto;
-  margin-top: 20px;
-  border-radius: 12px;
+.blok:hover {
+  transform: scale(1.05);
 }
 
-#sommen {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sommetje label {
-  font-size: 1.2em;
-}
+.rekenen { background-color: #2196f3; }
+.woorden { background-color: #ff9800; }
+.schrijven { background-color: #9c27b0; }
+.puzzels { background-color: #e91e63; }
 
 input[type="number"] {
   width: 70px;
@@ -85,10 +90,6 @@ button:hover {
     display: inline-block;
     margin: 5px 0;
     font-size: 1em;
-  }
-
-  input[type="number"] {
-    width: 60px;
   }
 
   button {

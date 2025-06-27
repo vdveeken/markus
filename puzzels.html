@@ -1,0 +1,34 @@
+<!-- puzzels.html -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Woordenzoeker</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    function toonWoorden() {
+      const woorden = ['boom', 'fiets', 'school', 'boek', 'zon', 'regen', 'huis', 'deur', 'stoel', 'tafel'];
+      const lijst = document.getElementById("woordenlijst");
+      woorden.forEach(w => {
+        let li = document.createElement("li");
+        li.textContent = w;
+        lijst.appendChild(li);
+      });
+    }
+  </script>
+</head>
+<body onload="toonWoorden()">
+  <header>
+    <h1>🧩 Woordzoeker</h1>
+    <nav>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+  <main>
+    <p>Zoek de volgende woorden in de puzzel (fysiek of in je hoofd 😊):</p>
+    <ul id="woordenlijst"></ul>
+    <p><em>Let op: de echte puzzel volgt nog in een latere versie met JavaScript of als afbeelding.</em></p>
+  </main>
+</body>
+</html>
