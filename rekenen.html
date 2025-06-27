@@ -4,63 +4,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rekenen met Markus</title>
+  <title>Rekensommen</title>
   <link rel="stylesheet" href="style.css">
   <script>
-    function genereerSommen() {
-      const container = document.getElementById("sommen");
-      container.innerHTML = "";
+    function generateSum(max) {
       const operators = ['+', '-', '*'];
+      let a = Math.floor(Math.random() * max) + 1;
+      let b = Math.floor(Math.random() * max) + 1;
+      let op = operators[Math.floor(Math.random() * operators.length)];
+
+      // Corrigeer waarden zodat het resultaat niet boven 20 komt
+      if (op === '+') {
+        while (a + b > 20) {
+          a = Math.floor(Math.random() * max) + 1;
+          b = Math.floor(Math.random() * max) + 1;
+        }
+      } else if (op === '-') {
+        if (a < b) [a, b] = [b, a];
+      } else if (op === '*') {
+        while (a * b > 20) {
+          a = Math.floor(Math.random() * max) + 1;
+          b = Math.floor(Math.random() * max) + 1;
+        }
+      }
+      return { question: `${a} ${op} ${b}`, answer: eval(`${a}${op}${b}`) };
+    }
+
+    function generateExercises() {
+      const container = document.getElementById('sommen');
+      container.innerHTML = '';
+      window.answers = [];
 
       for (let i = 0; i < 10; i++) {
-        let a = Math.floor(Math.random() * 20) + 1;
-        let b = Math.floor(Math.random() * 20) + 1;
-        let operator = operators[Math.floor(Math.random() * operators.length)];
-        let som = `${a} ${operator} ${b}`;
-
-        let div = document.createElement("div");
-        div.className = "sommetje";
-        div.innerHTML = `
-          <label>${som} = <input type="number" data-a="${a}" data-b="${b}" data-op="${operator}"></label>
-        `;
+        const sum = generateSum(20);
+        window.answers.push(sum.answer);
+        const div = document.createElement('div');
+        div.innerHTML = `${i + 1}. ${sum.question} = <input type="number" id="antwoord${i}">`;
         container.appendChild(div);
       }
     }
 
-    function controleerAntwoorden() {
-      const inputs = document.querySelectorAll('#sommen input');
-      inputs.forEach(input => {
-        const a = parseInt(input.dataset.a);
-        const b = parseInt(input.dataset.b);
-        const op = input.dataset.op;
-        let correct;
-        if (op === '+') correct = a + b;
-        else if (op === '-') correct = a - b;
-        else if (op === '*') correct = a * b;
-
-        if (parseInt(input.value) === correct) {
-          input.style.borderColor = "green";
-        } else {
-          input.style.borderColor = "red";
-        }
-      });
+    function controleren() {
+      let goed = 0;
+      for (let i = 0; i < 10; i++) {
+        const userInput = parseInt(document.getElementById(`antwoord${i}`).value);
+        if (userInput === window.answers[i]) goed++;
+      }
+      alert(`Je hebt ${goed} van de 10 goed!`);
     }
   </script>
 </head>
-<body onload="genereerSommen()">
+<body onload="generateExercises()">
   <header>
-    <h1>🧠 Rekenen met Markus</h1>
-    <nav>
-      <a href="index.html">🏠 Home</a>
-      <a href="rekenen.html">🧮 Rekenen</a>
-    </nav>
+    <h1>🧮 Rekenen</h1>
+    <nav><a href="index.html">Home</a></nav>
   </header>
   <main>
-    <section>
-      <p>Los de volgende <strong>10 sommen</strong> op. Vul je antwoord in en klik op <em>'Controleren'</em>.</p>
-      <div id="sommen"></div>
-      <button onclick="controleerAntwoorden()">✅ Controleren</button>
-    </section>
+    <div id="sommen"></div>
+    <button onclick="controleren()">Controleren</button>
   </main>
 </body>
 </html>
