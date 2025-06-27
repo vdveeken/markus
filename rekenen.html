@@ -1,0 +1,62 @@
+<!-- rekenen.html -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekenen met Markus</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    function genereerSommen() {
+      const container = document.getElementById("sommen");
+      container.innerHTML = "";
+      const operators = ['+', '-', '*'];
+
+      for (let i = 0; i < 10; i++) {
+        let a = Math.floor(Math.random() * 20) + 1;
+        let b = Math.floor(Math.random() * 20) + 1;
+        let operator = operators[Math.floor(Math.random() * operators.length)];
+        let som = `${a} ${operator} ${b}`;
+
+        let div = document.createElement("div");
+        div.innerHTML = `
+          <label>${som} = <input type="number" data-a="${a}" data-b="${b}" data-op="${operator}"></label>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function controleerAntwoorden() {
+      const inputs = document.querySelectorAll('#sommen input');
+      inputs.forEach(input => {
+        const a = parseInt(input.dataset.a);
+        const b = parseInt(input.dataset.b);
+        const op = input.dataset.op;
+        let correct;
+        if (op === '+') correct = a + b;
+        else if (op === '-') correct = a - b;
+        else if (op === '*') correct = a * b;
+
+        if (parseInt(input.value) === correct) {
+          input.style.borderColor = "green";
+        } else {
+          input.style.borderColor = "red";
+        }
+      });
+    }
+  </script>
+</head>
+<body onload="genereerSommen()">
+  <header>
+    <h1>Rekenen met Markus ➕➖✖️</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="rekenen.html">Rekenen</a>
+    </nav>
+  </header>
+  <main>
+    <p>Los de volgende 10 sommen op. Vul je antwoord in en klik op 'Controleren'.</p>
+    <div id="sommen"></div>
+    <button onclick="controleerAntwoorden()">Controleren</button>
+  </main>
+</body>
+</html>
