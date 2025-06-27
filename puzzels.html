@@ -2,55 +2,132 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Woordzoeker</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <style>
-    #puzzle, #words {
-      margin: 20px auto;
+    #puzzle {
+      font-family: monospace;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 2px;
       max-width: 95vw;
-      overflow-x: auto;
-    }
-    .wordsearch-table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .wordsearch-table td {
-      width: 8vw;
-      height: 8vw;
-      max-width: 30px;
-      max-height: 30px;
-      text-align: center;
+      margin: 20px auto;
       font-size: 4vw;
-      cursor: pointer;
     }
-    .wordsearch-table td.found {
-      background-color: #90ee90;
+
+    #puzzle span {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 5px;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      user-select: none;
+    }
+
+    #puzzle span.selected {
+      background-color: lightblue;
+    }
+
+    #words {
+      text-align: center;
+      margin: 20px auto;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfind.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfindgame.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>🧩 Woordzoeker</h1>
+    <h1>🤩 Woordzoeker</h1>
     <nav><a href="index.html">Home</a></nav>
   </header>
   <main>
-    <p>Zoek de woorden hieronder in het raster!</p>
+    <p style="text-align: center;">Zoek de woorden hieronder in het raster!</p>
     <div id="puzzle"></div>
     <div id="words"></div>
   </main>
   <script>
-    window.addEventListener('load', () => {
-      const woordenlijst = ['boom', 'fiets', 'school', 'boek', 'zon', 'regen', 'huis', 'deur', 'stoel', 'tafel'];
-      wordfindgame.create({
-        puzzleContainer: document.getElementById('puzzle'),
-        words: woordenlijst,
-        wordListContainer: document.getElementById('words')
-      });
+    const woorden = ["boom", "fiets", "school", "boek", "zon", "regen", "huis", "deur", "stoel", "tafel"];
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const gridSize = 10;
+    const grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
+
+    const cellRefs = [];
+
+    // plaats woorden horizontaal
+    woorden.forEach(word => {
+      let row = Math.floor(Math.random() * gridSize);
+      let col = Math.floor(Math.random() * (gridSize - word.length));
+      for (let i = 0; i < word.length; i++) {
+        grid[row][col + i] = word[i].toUpperCase();
+      }
     });
+
+    // vul lege cellen met random letters
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        if (grid[r][c] === '') {
+          grid[r][c] = letters[Math.floor(Math.random() * letters.length)];
+        }
+      }
+    }
+
+    // toon grid
+    const puzzle = document.getElementById("puzzle");
+    for (let r = 0; r < gridSize; r++) {
+      cellRefs[r] = [];
+      for (let c = 0; c < gridSize; c++) {
+        const span = document.createElement("span");
+        span.textContent = grid[r][c];
+        span.dataset.row = r;
+        span.dataset.col = c;
+        puzzle.appendChild(span);
+        cellRefs[r][c] = span;
+      }
+    }
+
+    // selectie logica
+    let selecting = false;
+    let selectedCells = [];
+
+    function clearSelection() {
+      selectedCells.forEach(cell => cell.classList.remove("selected"));
+      selectedCells = [];
+    }
+
+    puzzle.addEventListener("pointerdown", e => {
+      if (e.target.tagName === "SPAN") {
+        clearSelection();
+        selecting = true;
+        e.target.classList.add("selected");
+        selectedCells.push(e.target);
+      }
+    });
+
+    puzzle.addEventListener("pointerover", e => {
+      if (selecting && e.target.tagName === "SPAN" && !selectedCells.includes(e.target)) {
+        e.target.classList.add("selected");
+        selectedCells.push(e.target);
+      }
+    });
+
+    window.addEventListener("pointerup", () => {
+      if (selecting) {
+        selecting = false;
+        const woord = selectedCells.map(cell => cell.textContent).join('').toLowerCase();
+        if (woorden.includes(woord)) {
+          alert(`Goed gedaan! Je vond: ${woord}`);
+        } else {
+          alert(`Oeps! ${woord} staat niet op de lijst.`);
+          clearSelection();
+        }
+      }
+    });
+
+    // toon woorden
+    const wordsDiv = document.getElementById("words");
+    wordsDiv.innerHTML = "<strong>Woorden:</strong><br>" + woorden.join(", ");
   </script>
 </body>
 </html>
