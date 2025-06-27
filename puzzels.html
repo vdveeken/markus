@@ -6,29 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Woordzoeker</title>
   <link rel="stylesheet" href="style.css">
-<style>
-  #puzzle, #words {
-    margin: 10px auto;
-    max-width: 95vw;
-    overflow-x: auto;
-  }
-  .wordsearch-table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  .wordsearch-table td {
-    width: 8vw;
-    height: 8vw;
-    max-width: 30px;
-    max-height: 30px;
-    text-align: center;
-    font-size: 4vw;
-    cursor: pointer;
-  }
-  .wordsearch-table td.found {
-    background-color: #90ee90;
-  }
-</style>
+  <style>
+    #puzzle, #words {
+      margin: 20px auto;
+      max-width: 95vw;
+      overflow-x: auto;
+    }
+    .wordsearch-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .wordsearch-table td {
+      width: 8vw;
+      height: 8vw;
+      max-width: 30px;
+      max-height: 30px;
+      text-align: center;
+      font-size: 4vw;
+      cursor: pointer;
+    }
+    .wordsearch-table td.found {
+      background-color: #90ee90;
+    }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfind.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/wordfind@1.2.4/lib/wordfindgame.min.js"></script>
 </head>
@@ -43,11 +43,13 @@
     <div id="words"></div>
   </main>
   <script>
-    const woordenlijst = ['boom', 'fiets', 'school', 'boek', 'zon', 'regen', 'huis', 'deur', 'stoel', 'tafel'];
-    wordfindgame.create({
-      puzzleContainer: document.getElementById('puzzle'),
-      words: woordenlijst,
-      wordListContainer: document.getElementById('words')
+    window.addEventListener('load', () => {
+      const woordenlijst = ['boom', 'fiets', 'school', 'boek', 'zon', 'regen', 'huis', 'deur', 'stoel', 'tafel'];
+      wordfindgame.create({
+        puzzleContainer: document.getElementById('puzzle'),
+        words: woordenlijst,
+        wordListContainer: document.getElementById('words')
+      });
     });
   </script>
 </body>
