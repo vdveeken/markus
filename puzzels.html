@@ -1,4 +1,3 @@
-<!-- puzzels.html -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -15,6 +14,7 @@
       max-width: 95vw;
       margin: 20px auto;
       font-size: 4vw;
+      touch-action: none; /* voorkomt scrollen tijdens touch */
     }
 
     #puzzle span {
@@ -25,6 +25,7 @@
       background: #f0f0f0;
       border: 1px solid #ccc;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     #puzzle span.selected {
@@ -55,7 +56,7 @@
 
     const cellRefs = [];
 
-    // plaats woorden horizontaal
+    // Plaats woorden horizontaal
     woorden.forEach(word => {
       let row = Math.floor(Math.random() * gridSize);
       let col = Math.floor(Math.random() * (gridSize - word.length));
@@ -64,7 +65,7 @@
       }
     });
 
-    // vul lege cellen met random letters
+    // Vul lege cellen met random letters
     for (let r = 0; r < gridSize; r++) {
       for (let c = 0; c < gridSize; c++) {
         if (grid[r][c] === '') {
@@ -73,7 +74,7 @@
       }
     }
 
-    // toon grid
+    // Toon grid
     const puzzle = document.getElementById("puzzle");
     for (let r = 0; r < gridSize; r++) {
       cellRefs[r] = [];
@@ -87,7 +88,7 @@
       }
     }
 
-    // selectie logica
+    // Selectielogica
     let selecting = false;
     let selectedCells = [];
 
@@ -98,6 +99,7 @@
 
     puzzle.addEventListener("pointerdown", e => {
       if (e.target.tagName === "SPAN") {
+        e.preventDefault(); // voorkomt scrollen op mobiel
         clearSelection();
         selecting = true;
         e.target.classList.add("selected");
@@ -105,12 +107,16 @@
       }
     });
 
-    puzzle.addEventListener("pointerover", e => {
-      if (selecting && e.target.tagName === "SPAN" && !selectedCells.includes(e.target)) {
-        e.target.classList.add("selected");
-        selectedCells.push(e.target);
+    function selectCell(e) {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (selecting && el && el.tagName === "SPAN" && !selectedCells.includes(el)) {
+        el.classList.add("selected");
+        selectedCells.push(el);
       }
-    });
+    }
+
+    puzzle.addEventListener("pointerover", selectCell);
+    puzzle.addEventListener("pointermove", selectCell);
 
     window.addEventListener("pointerup", () => {
       if (selecting) {
@@ -125,7 +131,7 @@
       }
     });
 
-    // toon woorden
+    // Toon woorden
     const wordsDiv = document.getElementById("words");
     wordsDiv.innerHTML = "<strong>Woorden:</strong><br>" + woorden.join(", ");
   </script>
