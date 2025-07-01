@@ -2,9 +2,88 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Woorden Oefenen</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 1em auto;
+      padding: 0 1em;
+    }
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 0.2em;
+    }
+    nav a {
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 0.8em;
+      font-size: 1.2em;
+    }
+    input[type="text"] {
+      width: 1.2em;
+      text-align: center;
+      font-size: 1.2em;
+      margin: 0 0.1em;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      vertical-align: middle;
+    }
+    input.correct {
+      background-color: #ffff99; /* lichtgeel */
+      border-color: #999900;
+      font-weight: bold;
+    }
+    input.incorrect {
+      background-color: #ffb3b3; /* lichtrood */
+      border-color: #cc0000;
+    }
+    li.gevonden {
+      background-color: #ffff99; /* lichtgeel gearceerd */
+      padding: 0.1em 0.3em;
+      border-radius: 4px;
+    }
+    #gevondenWoorden li {
+      font-size: 1em;
+      margin-bottom: 0.4em;
+    }
+    #gevondenWoorden li.gevonden s {
+      text-decoration: line-through;
+      color: #555;
+    }
+    button {
+      margin-right: 1em;
+      margin-top: 0.5em;
+      padding: 0.4em 0.8em;
+      font-size: 1em;
+      cursor: pointer;
+      border: 1px solid #007BFF;
+      border-radius: 4px;
+      background-color: white;
+      color: #007BFF;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #007BFF;
+      color: white;
+    }
+    #resultaat {
+      font-weight: bold;
+      margin-top: 1em;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -13,12 +92,15 @@
   </header>
   <main>
     <p>Vul de ontbrekende letters aan:</p>
-    <form id="woordForm">
+    <form id="woordForm" onsubmit="return false;">
       <ul id="woordenlijst"></ul>
       <button type="button" onclick="controleer()">Controleer antwoorden</button>
       <button type="button" onclick="nieuweVragen()">Nieuwe vragen</button>
     </form>
-    <div id="resultaat" style="margin-top: 1em;"></div>
+    <div id="resultaat"></div>
+
+    <h2>Gevonden woorden</h2>
+    <ul id="gevondenWoorden"></ul>
   </main>
 
   <script>
@@ -44,12 +126,15 @@
 
     function nieuweVragen() {
       const lijst = document.getElementById("woordenlijst");
+      const gevondenLijst = document.getElementById("gevondenWoorden");
       lijst.innerHTML = "";
+      gevondenLijst.innerHTML = "";
       document.getElementById("resultaat").textContent = "";
 
       actieveWoorden = woorden
         .sort(() => 0.5 - Math.random())
-        .slice(0, 10);
+        .slice(0, 10)
+        .map(w => ({ ...w, gevonden: false }));
 
       actieveWoorden.forEach((item, index) => {
         const woordArray = item.woord.split('');
@@ -59,34 +144,75 @@
 
         const invoerWoord = woordArray.join('');
         const li = document.createElement('li');
+        li.id = `woord-${index}`;
         li.innerHTML = `${invoerWoord} <em>(${item.hint})</em>`;
         lijst.appendChild(li);
       });
+
+      updateGevondenWoorden();
     }
 
     function controleer() {
-      const inputs = document.querySelectorAll('input[type="text"]');
       let allesGoed = true;
 
-      inputs.forEach(input => {
-        const woordIndex = input.getAttribute("data-index");
-        const letterPos = input.getAttribute("data-pos");
-        const juisteLetter = actieveWoorden[woordIndex].woord[letterPos];
-        const ingevuld = input.value.toLowerCase();
+      actieveWoorden.forEach((item, index) => {
+        if (item.gevonden) return;
 
-        if (ingevuld === juisteLetter) {
-          input.classList.remove("incorrect");
-          input.classList.add("correct");
-        } else {
-          input.classList.remove("correct");
-          input.classList.add("incorrect");
-          allesGoed = false;
+        const ontbreekLetters = item.ontbreek;
+        let woordGoed = true;
+
+        ontbreekLetters.forEach(pos => {
+          const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
+          if (!input) {
+            woordGoed = false;
+            return;
+          }
+          const juisteLetter = item.woord[pos];
+          const ingevuld = input.value.toLowerCase();
+
+          if (ingevuld === juisteLetter) {
+            input.classList.remove("incorrect");
+            input.classList.add("correct");
+          } else {
+            input.classList.remove("correct");
+            input.classList.add("incorrect");
+            woordGoed = false;
+            allesGoed = false;
+          }
+        });
+
+        if (woordGoed) {
+          item.gevonden = true;
+          const li = document.getElementById(`woord-${index}`);
+          if (li) {
+            li.classList.add("gevonden");
+            const woordInputs = li.querySelectorAll("input");
+            woordInputs.forEach(i => i.disabled = true);
+          }
         }
       });
+
+      updateGevondenWoorden();
 
       document.getElementById("resultaat").textContent = allesGoed
         ? "✅ Alles goed ingevuld!"
         : "❌ Niet alles klopt. Probeer het nog eens.";
+    }
+
+    function updateGevondenWoorden() {
+      const gevondenLijst = document.getElementById("gevondenWoorden");
+      gevondenLijst.innerHTML = "";
+
+      actieveWoorden.forEach(item => {
+        const li = document.createElement('li');
+        if (item.gevonden) {
+          li.classList.add("gevonden");
+          li.innerHTML = `<s>${item.woord}</s>`;
+        } else {
+          li.textContent = item.woord;
+        }
+        gevondenLijst.appendChild(li);
+      });
     }
 
     window.onload = nieuweVragen;
