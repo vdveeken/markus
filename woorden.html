@@ -49,11 +49,15 @@
       background-color: #ffb3b3; /* lichtrood */
       border-color: #cc0000;
     }
+    /* Gearceerd woord in de puzzel */
     li.gevonden {
-      background-color: #ffff99; /* lichtgeel gearceerd */
-      padding: 0.1em 0.3em;
-      border-radius: 4px;
+      background-color: #fff799;
+      border-radius: 5px;
+      padding: 0.1em 0.4em;
+      font-weight: bold;
+      transition: background-color 0.3s;
     }
+    /* Onderstreepte woorden in gevonden lijst */
     #gevondenWoorden li {
       font-size: 1em;
       margin-bottom: 0.4em;
@@ -61,6 +65,7 @@
     #gevondenWoorden li.gevonden s {
       text-decoration: line-through;
       color: #555;
+      font-weight: normal;
     }
     button {
       margin-right: 1em;
@@ -156,7 +161,7 @@
       let allesGoed = true;
 
       actieveWoorden.forEach((item, index) => {
-        if (item.gevonden) return;
+        if (item.gevonden) return; // al gevonden, overslaan
 
         const ontbreekLetters = item.ontbreek;
         let woordGoed = true;
@@ -186,8 +191,12 @@
           const li = document.getElementById(`woord-${index}`);
           if (li) {
             li.classList.add("gevonden");
-            const woordInputs = li.querySelectorAll("input");
-            woordInputs.forEach(i => i.disabled = true);
+            const inputs = li.querySelectorAll("input");
+            inputs.forEach(i => {
+              i.classList.remove("incorrect");
+              i.classList.add("correct");
+              i.disabled = true;
+            });
           }
         }
       });
