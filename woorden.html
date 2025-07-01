@@ -1,44 +1,10 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Woorden Oefenen</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-  }
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  li {
-    margin-bottom: 0.5em;
-    font-size: 1.2em;
-  }
-  li.gevonden {
-    background-color: #fff799;
-    font-weight: bold;
-    border-radius: 4px;
-    padding: 0.1em 0.4em;
-  }
-  #gevondenWoorden li s {
-    text-decoration: line-through;
-    color: #555;
-  }
-  input {
-    width: 1.2em;
-    text-align: center;
-    font-size: 1.2em;
-  }
-  input.correct {
-    background-color: #ffff99;
-  }
-  button {
-    margin-right: 0.5em;
-    font-size: 1em;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Woorden Oefenen</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -82,7 +48,6 @@
   ];
 
   let actieveWoorden = [];
-  // Bijhouden welke woorden gevonden zijn
   let gevondenSet = new Set();
 
   function nieuweVragen() {
@@ -90,13 +55,11 @@
     lijst.innerHTML = "";
     document.getElementById("resultaat").textContent = "";
     gevondenSet.clear();
-    
-    // Pak 10 willekeurige woorden uit de lijst
+
     actieveWoorden = woorden
       .sort(() => 0.5 - Math.random())
       .slice(0, 10);
 
-    // Maak gevonden lijst opnieuw
     const gevondenLijst = document.getElementById("gevondenWoorden");
     gevondenLijst.innerHTML = "";
     actieveWoorden.forEach(item => {
@@ -106,7 +69,6 @@
       gevondenLijst.appendChild(li);
     });
 
-    // Maak puzzel lijst met inputs
     actieveWoorden.forEach((item, index) => {
       const woordArray = item.woord.split('');
       item.ontbreek.forEach(i => {
@@ -121,12 +83,10 @@
 
   function controleer() {
     let allesGoed = true;
-    const lijst = document.getElementById("woordenlijst");
 
     actieveWoorden.forEach((item, index) => {
       let woordIsGoed = true;
 
-      // Check alle inputposities
       item.ontbreek.forEach(pos => {
         const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
         if (!input) return;
@@ -148,15 +108,12 @@
       const gevondenLijstItems = document.querySelectorAll(`#gevondenWoorden li[data-woord="${item.woord}"]`);
 
       if (woordIsGoed) {
-        // Markeer woord gearceerd (blijvend!)
         liPuzzel.classList.add("gevonden");
-        // Maak inputs disabled
         item.ontbreek.forEach(pos => {
           const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
           if (input) input.disabled = true;
         });
 
-        // Doorgestreept in gevonden lijst (blijvend!)
         gevondenLijstItems.forEach(li => {
           if (!gevondenSet.has(item.woord)) {
             li.innerHTML = `<s>${item.woord}</s>`;
@@ -165,7 +122,6 @@
         });
 
       } else {
-        // Als woord nog niet gevonden, laat input actief en arcering weg (maar niet terugtrekken van eerder gevonden woorden!)
         if (!gevondenSet.has(item.woord)) {
           liPuzzel.classList.remove("gevonden");
           item.ontbreek.forEach(pos => {
@@ -179,7 +135,6 @@
       }
     });
 
-    // Resultaatmelding
     document.getElementById("resultaat").textContent = allesGoed
       ? "✅ Alles goed ingevuld!"
       : "❌ Niet alles klopt. Probeer het nog eens.";
