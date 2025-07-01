@@ -4,12 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Woorden Oefenen</title>
-  <style>
-    .correct { color: green; font-weight: bold; }
-    .incorrect { color: red; font-weight: bold; }
-    input { width: 1em; text-align: center; }
-    button { margin-top: 1em; margin-right: 0.5em; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
@@ -58,7 +53,6 @@
 
       actieveWoorden.forEach((item, index) => {
         const woordArray = item.woord.split('');
-        const inputvelden = [];
         item.ontbreek.forEach(i => {
           woordArray[i] = `<input type="text" maxlength="1" data-index="${index}" data-pos="${i}">`;
         });
@@ -95,7 +89,6 @@
         : "❌ Niet alles klopt. Probeer het nog eens.";
     }
 
-    // Initieel vullen bij laden
     window.onload = nieuweVragen;
   </script>
 </body>
