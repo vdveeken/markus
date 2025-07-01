@@ -22,9 +22,6 @@
     <button type="button" onclick="nieuweVragen()">Nieuwe vragen</button>
   </form>
 
-  <h2>Gevonden woorden</h2>
-  <ul id="gevondenWoorden"></ul>
-
   <div id="resultaat" style="margin-top: 1em; font-weight: bold;"></div>
 </main>
 
@@ -48,26 +45,15 @@
   ];
 
   let actieveWoorden = [];
-  let gevondenSet = new Set();
 
   function nieuweVragen() {
     const lijst = document.getElementById("woordenlijst");
     lijst.innerHTML = "";
     document.getElementById("resultaat").textContent = "";
-    gevondenSet.clear();
 
     actieveWoorden = woorden
       .sort(() => 0.5 - Math.random())
       .slice(0, 10);
-
-    const gevondenLijst = document.getElementById("gevondenWoorden");
-    gevondenLijst.innerHTML = "";
-    actieveWoorden.forEach(item => {
-      const li = document.createElement("li");
-      li.textContent = item.woord;
-      li.setAttribute("data-woord", item.woord);
-      gevondenLijst.appendChild(li);
-    });
 
     actieveWoorden.forEach((item, index) => {
       const woordArray = item.woord.split('');
@@ -105,7 +91,6 @@
       });
 
       const liPuzzel = document.getElementById(`woord-${index}`);
-      const gevondenLijstItems = document.querySelectorAll(`#gevondenWoorden li[data-woord="${item.woord}"]`);
 
       if (woordIsGoed) {
         liPuzzel.classList.add("gevonden");
@@ -113,25 +98,12 @@
           const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
           if (input) input.disabled = true;
         });
-
-        gevondenLijstItems.forEach(li => {
-          if (!gevondenSet.has(item.woord)) {
-            li.innerHTML = `<s>${item.woord}</s>`;
-            gevondenSet.add(item.woord);
-          }
-        });
-
       } else {
-        if (!gevondenSet.has(item.woord)) {
-          liPuzzel.classList.remove("gevonden");
-          item.ontbreek.forEach(pos => {
-            const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
-            if (input) input.disabled = false;
-          });
-          gevondenLijstItems.forEach(li => {
-            li.textContent = item.woord;
-          });
-        }
+        liPuzzel.classList.remove("gevonden");
+        item.ontbreek.forEach(pos => {
+          const input = document.querySelector(`input[data-index="${index}"][data-pos="${pos}"]`);
+          if (input) input.disabled = false;
+        });
       }
     });
 
