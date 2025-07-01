@@ -2,10 +2,29 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Schrijven Oefenen</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Klein beetje styling voor feedback */
+    #feedback {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    #feedback.correct {
+      color: green;
+    }
+    #feedback.incorrect {
+      color: red;
+    }
+    button {
+      margin-top: 1em;
+      margin-right: 1em;
+      padding: 0.5em 1em;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -14,20 +33,75 @@
   </header>
   <main>
     <p>Vul het ontbrekende woord in:</p>
-    <form>
+    <form id="zinForm">
       <ol>
-        <li>De zon schijnt in de <input type="text"></li>
-        <li>Ik eet een boterham met <input type="text"></li>
-        <li>Markus gaat naar de <input type="text"></li>
-        <li>De hond blaft naar de <input type="text"></li>
-        <li>We spelen op het <input type="text"></li>
-        <li>In de klas zit een <input type="text"></li>
-        <li>Ik kleur met een <input type="text"></li>
-        <li>Mijn jas hangt aan de <input type="text"></li>
-        <li>Hij drinkt uit een <input type="text"></li>
-        <li>We lopen door de <input type="text"></li>
+        <li>De zon schijnt in de <input type="text" placeholder="bijv. hemel" /></li>
+        <li>Ik eet een boterham met <input type="text" placeholder="bijv. kaas" /></li>
+        <li>Markus gaat naar de <input type="text" placeholder="bijv. school" /></li>
+        <li>De hond blaft naar de <input type="text" placeholder="bijv. kat" /></li>
+        <li>We spelen op het <input type="text" placeholder="bijv. plein" /></li>
+        <li>In de klas zit een <input type="text" placeholder="bijv. leerling" /></li>
+        <li>Ik kleur met een <input type="text" placeholder="bijv. potlood" /></li>
+        <li>Mijn jas hangt aan de <input type="text" placeholder="bijv. kapstok" /></li>
+        <li>Hij drinkt uit een <input type="text" placeholder="bijv. glas" /></li>
+        <li>We lopen door de <input type="text" placeholder="bijv. straat" /></li>
       </ol>
+      <button type="button" id="checkBtn">Controleer</button>
+      <button type="button" id="newBtn">Nieuwe zinnen</button>
     </form>
+    <div id="feedback" role="alert" aria-live="polite"></div>
   </main>
+
+  <script>
+    const juisteAntwoorden = [
+      "hemel",
+      "kaas",
+      "school",
+      "kat",
+      "plein",
+      "leerling",
+      "potlood",
+      "kapstok",
+      "glas",
+      "straat"
+    ];
+
+    const form = document.getElementById('zinForm');
+    const feedback = document.getElementById('feedback');
+    const checkBtn = document.getElementById('checkBtn');
+    const newBtn = document.getElementById('newBtn');
+
+    checkBtn.addEventListener('click', () => {
+      const inputs = form.querySelectorAll('input[type="text"]');
+      let correctCount = 0;
+      let total = inputs.length;
+      let feedbackMessages = [];
+
+      inputs.forEach((input, i) => {
+        const antwoord = input.value.trim().toLowerCase();
+        if (antwoord === juisteAntwoorden[i]) {
+          correctCount++;
+          input.style.borderColor = 'green';
+        } else {
+          input.style.borderColor = 'red';
+          feedbackMessages.push(`Fout bij zin ${i + 1}`);
+        }
+      });
+
+      if (correctCount === total) {
+        feedback.textContent = "Alle antwoorden zijn correct! Goed gedaan!";
+        feedback.className = "correct";
+      } else {
+        feedback.textContent = `Je hebt ${correctCount} van de ${total} goed. ${feedbackMessages.join('. ')}`;
+        feedback.className = "incorrect";
+      }
+    });
+
+    newBtn.addEventListener('click', () => {
+      // Voor nu herlaadt dit de pagina.
+      // Later kun je hier een functie koppelen die nieuwe zinnen genereert.
+      window.location.reload();
+    });
+  </script>
 </body>
 </html>
