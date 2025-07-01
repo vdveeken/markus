@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Woordzoeker</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     #puzzle {
       font-family: monospace;
@@ -26,15 +25,40 @@
       border: 1px solid #ccc;
       user-select: none;
       -webkit-user-select: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
 
+    /* Kleur voor geselecteerde letters tijdens selectie */
     #puzzle span.selected {
       background-color: lightblue;
+    }
+
+    /* Kleur voor letters van gevonden woorden (blijvend gearceerd) */
+    #puzzle span.found {
+      background-color: gold;
+      color: black;
+      font-weight: bold;
     }
 
     #words {
       text-align: center;
       margin: 20px auto;
+      font-size: 1.2em;
+    }
+
+    #words span.found-word {
+      text-decoration: line-through;
+      color: gray;
+      user-select: none;
+    }
+
+    #newPuzzleBtn {
+      display: block;
+      margin: 10px auto 40px auto;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -47,45 +71,89 @@
     <p style="text-align: center;">Zoek de woorden hieronder in het raster!</p>
     <div id="puzzle"></div>
     <div id="words"></div>
+    <button id="newPuzzleBtn">Nieuwe puzzel</button>
   </main>
   <script>
+    // Woordenlijst
     const woorden = ["boom", "fiets", "school", "boek", "zon", "regen", "huis", "deur", "stoel", "tafel"];
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const gridSize = 10;
-    const grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
 
-    const cellRefs = [];
+    // State voor gevonden woorden
+    let gevondenWoorden = new Set();
 
-    // Plaats woorden horizontaal
-    woorden.forEach(word => {
-      let row = Math.floor(Math.random() * gridSize);
-      let col = Math.floor(Math.random() * (gridSize - word.length));
-      for (let i = 0; i < word.length; i++) {
-        grid[row][col + i] = word[i].toUpperCase();
-      }
-    });
+    // Referenties voor cellen en woord-elementen
+    let cellRefs = [];
+    let woordElements = [];
 
-    // Vul lege cellen met random letters
-    for (let r = 0; r < gridSize; r++) {
-      for (let c = 0; c < gridSize; c++) {
-        if (grid[r][c] === '') {
-          grid[r][c] = letters[Math.floor(Math.random() * letters.length)];
+    // Functie om een nieuwe puzzel te maken
+    function maakPuzzel() {
+      gevondenWoorden.clear();
+      cellRefs = [];
+      woordElements = [];
+
+      // Maak leeg grid
+      const grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
+
+      // Plaats woorden horizontaal op random posities (nieuw bij elke puzzel)
+      woorden.forEach(word => {
+        let placed = false;
+        while (!placed) {
+          let row = Math.floor(Math.random() * gridSize);
+          let col = Math.floor(Math.random() * (gridSize - word.length));
+          // Controleer of plaats vrij is (of leeg)
+          let vrij = true;
+          for (let i = 0; i < word.length; i++) {
+            if (grid[row][col + i] !== '' && grid[row][col + i] !== word[i].toUpperCase()) {
+              vrij = false;
+              break;
+            }
+          }
+          if (vrij) {
+            for (let i = 0; i < word.length; i++) {
+              grid[row][col + i] = word[i].toUpperCase();
+            }
+            placed = true;
+          }
+        }
+      });
+
+      // Vul lege cellen met random letters
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          if (grid[r][c] === '') {
+            grid[r][c] = letters[Math.floor(Math.random() * letters.length)];
+          }
         }
       }
-    }
 
-    // Toon grid
-    const puzzle = document.getElementById("puzzle");
-    for (let r = 0; r < gridSize; r++) {
-      cellRefs[r] = [];
-      for (let c = 0; c < gridSize; c++) {
-        const span = document.createElement("span");
-        span.textContent = grid[r][c];
-        span.dataset.row = r;
-        span.dataset.col = c;
-        puzzle.appendChild(span);
-        cellRefs[r][c] = span;
+      // Maak het raster in de DOM
+      const puzzle = document.getElementById("puzzle");
+      puzzle.innerHTML = "";
+      for (let r = 0; r < gridSize; r++) {
+        cellRefs[r] = [];
+        for (let c = 0; c < gridSize; c++) {
+          const span = document.createElement("span");
+          span.textContent = grid[r][c];
+          span.dataset.row = r;
+          span.dataset.col = c;
+          puzzle.appendChild(span);
+          cellRefs[r][c] = span;
+        }
       }
+
+      // Maak woordenlijst onder de puzzel, woorden in <span>
+      const wordsDiv = document.getElementById("words");
+      wordsDiv.innerHTML = "<strong>Woorden:</strong><br>";
+      woorden.forEach(word => {
+        const sp = document.createElement("span");
+        sp.textContent = word;
+        sp.style.marginRight = "10px";
+        wordsDiv.appendChild(sp);
+        woordElements.push(sp);
+      });
+
+      clearSelection();
     }
 
     // Selectielogica
@@ -96,6 +164,8 @@
       selectedCells.forEach(cell => cell.classList.remove("selected"));
       selectedCells = [];
     }
+
+    const puzzle = document.getElementById("puzzle");
 
     puzzle.addEventListener("pointerdown", e => {
       if (e.target.tagName === "SPAN") {
@@ -123,17 +193,37 @@
         selecting = false;
         const woord = selectedCells.map(cell => cell.textContent).join('').toLowerCase();
         if (woorden.includes(woord)) {
-          alert(`Goed gedaan! Je vond: ${woord}`);
+          if (!gevondenWoorden.has(woord)) {
+            // Markeer cellen van gevonden woord met class found (blijvend)
+            selectedCells.forEach(cell => {
+              cell.classList.add("found");
+            });
+            gevondenWoorden.add(woord);
+            // Streep het woord door in lijst
+            const idx = woorden.indexOf(woord);
+            if (idx !== -1) {
+              woordElements[idx].classList.add("found-word");
+            }
+            alert(`Goed gedaan! Je vond: ${woord}`);
+          } else {
+            alert(`Je hebt het woord "${woord}" al gevonden!`);
+          }
         } else {
           alert(`Oeps! ${woord} staat niet op de lijst.`);
           clearSelection();
         }
+        clearSelection();
       }
     });
 
-    // Toon woorden
-    const wordsDiv = document.getElementById("words");
-    wordsDiv.innerHTML = "<strong>Woorden:</strong><br>" + woorden.join(", ");
+    // Knop voor nieuwe puzzel
+    const newPuzzleBtn = document.getElementById("newPuzzleBtn");
+    newPuzzleBtn.addEventListener("click", () => {
+      maakPuzzel();
+    });
+
+    // Init
+    maakPuzzel();
   </script>
 </body>
 </html>
