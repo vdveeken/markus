@@ -1,11 +1,15 @@
-<!-- woorden.html -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Woorden Oefenen</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    .correct { color: green; font-weight: bold; }
+    .incorrect { color: red; font-weight: bold; }
+    input { width: 1em; text-align: center; }
+    button { margin-top: 1em; margin-right: 0.5em; }
+  </style>
 </head>
 <body>
   <header>
@@ -14,20 +18,85 @@
   </header>
   <main>
     <p>Vul de ontbrekende letters aan:</p>
-    <form>
-      <ul>
-        <li>h<input type="text" maxlength="1">nd</li>
-        <li>b<input type="text" maxlength="1">m</li>
-        <li>v<input type="text" maxlength="1">g<input type="text" maxlength="1">l</li>
-        <li>k<input type="text" maxlength="1">s</li>
-        <li>sch<input type="text" maxlength="1">l</li>
-        <li><input type="text" maxlength="1">uto</li>
-        <li>gr<input type="text" maxlength="1">n</li>
-        <li><input type="text" maxlength="1">ier</li>
-        <li>kl<input type="text" maxlength="1">k</li>
-        <li>f<input type="text" maxlength="1">ets</li>
-      </ul>
+    <form id="woordForm">
+      <ul id="woordenlijst"></ul>
+      <button type="button" onclick="controleer()">Controleer antwoorden</button>
+      <button type="button" onclick="nieuweVragen()">Nieuwe vragen</button>
     </form>
+    <div id="resultaat" style="margin-top: 1em;"></div>
   </main>
+
+  <script>
+    const woorden = [
+      { woord: "hond", hint: "huisdier met poten", ontbreek: [1] },
+      { woord: "boom", hint: "groeit in het bos", ontbreek: [1] },
+      { woord: "vogel", hint: "vliegt in de lucht", ontbreek: [1, 3] },
+      { woord: "mes", hint: "om mee te snijden", ontbreek: [1] },
+      { woord: "school", hint: "gebouw met klaslokalen", ontbreek: [3] },
+      { woord: "auto", hint: "vervoermiddel met 4 wielen", ontbreek: [0] },
+      { woord: "groen", hint: "kleur van gras", ontbreek: [2] },
+      { woord: "dier", hint: "dierentuin-dier", ontbreek: [0] },
+      { woord: "klok", hint: "maakt lawaai als hij slaat", ontbreek: [2] },
+      { woord: "fiets", hint: "twee wielen, trappen", ontbreek: [1] },
+      { woord: "plant", hint: "groeit in een pot", ontbreek: [2] },
+      { woord: "stoel", hint: "om op te zitten", ontbreek: [2] },
+      { woord: "regen", hint: "valt uit de lucht", ontbreek: [2] },
+      { woord: "kaars", hint: "geeft licht", ontbreek: [2] },
+      { woord: "wolken", hint: "drijven in de lucht", ontbreek: [3] }
+    ];
+
+    let actieveWoorden = [];
+
+    function nieuweVragen() {
+      const lijst = document.getElementById("woordenlijst");
+      lijst.innerHTML = "";
+      document.getElementById("resultaat").textContent = "";
+
+      actieveWoorden = woorden
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10);
+
+      actieveWoorden.forEach((item, index) => {
+        const woordArray = item.woord.split('');
+        const inputvelden = [];
+        item.ontbreek.forEach(i => {
+          woordArray[i] = `<input type="text" maxlength="1" data-index="${index}" data-pos="${i}">`;
+        });
+
+        const invoerWoord = woordArray.join('');
+        const li = document.createElement('li');
+        li.innerHTML = `${invoerWoord} <em>(${item.hint})</em>`;
+        lijst.appendChild(li);
+      });
+    }
+
+    function controleer() {
+      const inputs = document.querySelectorAll('input[type="text"]');
+      let allesGoed = true;
+
+      inputs.forEach(input => {
+        const woordIndex = input.getAttribute("data-index");
+        const letterPos = input.getAttribute("data-pos");
+        const juisteLetter = actieveWoorden[woordIndex].woord[letterPos];
+        const ingevuld = input.value.toLowerCase();
+
+        if (ingevuld === juisteLetter) {
+          input.classList.remove("incorrect");
+          input.classList.add("correct");
+        } else {
+          input.classList.remove("correct");
+          input.classList.add("incorrect");
+          allesGoed = false;
+        }
+      });
+
+      document.getElementById("resultaat").textContent = allesGoed
+        ? "✅ Alles goed ingevuld!"
+        : "❌ Niet alles klopt. Probeer het nog eens.";
+    }
+
+    // Initieel vullen bij laden
+    window.onload = nieuweVragen;
+  </script>
 </body>
 </html>
