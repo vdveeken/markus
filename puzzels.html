@@ -105,7 +105,7 @@
 <body>
   <header>
     <h1>🤩 Woordzoeker</h1>
-    <nav><a href="index.html">Home</a></nav>
+    <nav><a href="#">Home</a></nav>
   </header>
   <main>
     <p style="text-align: center;">Zoek de woorden hieronder in het raster!</p>
@@ -114,14 +114,27 @@
     <button id="newPuzzleBtn">Nieuwe puzzel</button>
   </main>
   <script>
-    const woorden = ["boom", "fiets", "school", "boek", "zon", "regen", "huis", "deur", "stoel", "tafel"];
+    const alleWoorden = [
+      "appel", "boom", "computer", "fiets", "regen", "zon", "school", "boek",
+      "stoel", "tafel", "raam", "deur", "vliegtuig", "auto", "lamp", "vis",
+      "muur", "broek", "schoen", "jas", "vork", "mes", "lepel", "bord",
+      "plant", "tent", "strand", "ijsje", "berg", "bos", "zee", "wolken"
+    ];
+
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const gridSize = 10;
     let gevondenWoorden = new Set();
     let cellRefs = [];
     let woordElements = [];
+    let woorden = [];
+
+    function kiesWillekeurigeWoorden(aantal = 8) {
+      const shuffled = [...alleWoorden].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, aantal);
+    }
 
     function maakPuzzel() {
+      woorden = kiesWillekeurigeWoorden();
       gevondenWoorden.clear();
       cellRefs = [];
       woordElements = [];
