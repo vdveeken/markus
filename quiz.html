@@ -91,6 +91,24 @@
       color: #555;
       font-size: 0.9em;
     }
+
+    #nieuwe-vragen-btn {
+      display: block;
+      margin: 30px auto 50px auto;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      font-weight: bold;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #nieuwe-vragen-btn:hover {
+      background-color: #2e6b2a;
+    }
   </style>
 </head>
 <body>
@@ -102,54 +120,131 @@
   </header>
 
   <main id="quiz-container">
-    <!-- Vraag 1 -->
-    <div class="vraag">
-      <h2>Wat is de hoofdstad van Nederland?</h2>
-      <div class="antwoord">
-        <button class="rood" onclick="controleerAntwoord(this, 'amsterdam')">Rotterdam</button>
-        <button class="blauw" onclick="controleerAntwoord(this, 'amsterdam')">Den Haag</button>
-        <button class="groen" onclick="controleerAntwoord(this, 'amsterdam')">Utrecht</button>
-        <button class="geel" onclick="controleerAntwoord(this, 'amsterdam')">Amsterdam</button>
-      </div>
-      <div class="resultaat"></div>
-    </div>
-
-    <!-- Vraag 2 -->
-    <div class="vraag">
-      <h2>Hoeveel poten heeft een spin?</h2>
-      <div class="antwoord">
-        <button class="rood" onclick="controleerAntwoord(this, '8')">6</button>
-        <button class="blauw" onclick="controleerAntwoord(this, '8')">4</button>
-        <button class="groen" onclick="controleerAntwoord(this, '8')">10</button>
-        <button class="geel" onclick="controleerAntwoord(this, '8')">8</button>
-      </div>
-      <div class="resultaat"></div>
-    </div>
-
-    <!-- Vraag 3 -->
-    <div class="vraag">
-      <h2>Welk seizoen komt na de lente?</h2>
-      <div class="antwoord">
-        <button class="rood" onclick="controleerAntwoord(this, 'zomer')">Herfst</button>
-        <button class="blauw" onclick="controleerAntwoord(this, 'zomer')">Winter</button>
-        <button class="groen" onclick="controleerAntwoord(this, 'zomer')">Zomer</button>
-        <button class="geel" onclick="controleerAntwoord(this, 'zomer')">Lente</button>
-      </div>
-      <div class="resultaat"></div>
-    </div>
+    <!-- Vragen worden hier dynamisch geladen -->
   </main>
+
+  <button id="nieuwe-vragen-btn" onclick="laadNieuweVragen()">Nieuwe vragen</button>
 
   <footer>
     <p>&copy; 2025 Markus. Alle rechten voorbehouden.</p>
   </footer>
 
   <script>
+    // Voorbeeld sets van vragen, met antwoorden
+    const vraagSets = [
+      [
+        {
+          vraag: "Wat is de hoofdstad van Nederland?",
+          opties: [
+            {tekst: "Rotterdam", kleur: "rood"},
+            {tekst: "Den Haag", kleur: "blauw"},
+            {tekst: "Utrecht", kleur: "groen"},
+            {tekst: "Amsterdam", kleur: "geel"}
+          ],
+          juist: "amsterdam"
+        },
+        {
+          vraag: "Hoeveel poten heeft een spin?",
+          opties: [
+            {tekst: "6", kleur: "rood"},
+            {tekst: "4", kleur: "blauw"},
+            {tekst: "10", kleur: "groen"},
+            {tekst: "8", kleur: "geel"}
+          ],
+          juist: "8"
+        },
+        {
+          vraag: "Welk seizoen komt na de lente?",
+          opties: [
+            {tekst: "Herfst", kleur: "rood"},
+            {tekst: "Winter", kleur: "blauw"},
+            {tekst: "Zomer", kleur: "groen"},
+            {tekst: "Lente", kleur: "geel"}
+          ],
+          juist: "zomer"
+        }
+      ],
+      // Tweede set vragen, kan je uitbreiden
+      [
+        {
+          vraag: "Wat is de grootste planeet in ons zonnestelsel?",
+          opties: [
+            {tekst: "Mars", kleur: "rood"},
+            {tekst: "Jupiter", kleur: "blauw"},
+            {tekst: "Saturnus", kleur: "groen"},
+            {tekst: "Aarde", kleur: "geel"}
+          ],
+          juist: "jupiter"
+        },
+        {
+          vraag: "Hoeveel kleuren zitten er in een regenboog?",
+          opties: [
+            {tekst: "5", kleur: "rood"},
+            {tekst: "6", kleur: "blauw"},
+            {tekst: "7", kleur: "groen"},
+            {tekst: "8", kleur: "geel"}
+          ],
+          juist: "7"
+        },
+        {
+          vraag: "Welke vogel kan niet vliegen?",
+          opties: [
+            {tekst: "Pinguïn", kleur: "rood"},
+            {tekst: "Duif", kleur: "blauw"},
+            {tekst: "Merel", kleur: "groen"},
+            {tekst: "Zwaluw", kleur: "geel"}
+          ],
+          juist: "pinguïn"
+        }
+      ]
+    ];
+
+    // Houd bij welke set geladen is, start met 0
+    let huidigeSetIndex = 0;
+
+    // Functie om vragen te laden
+    function laadVragen(vragen) {
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = ""; // eerst leegmaken
+
+      vragen.forEach((vraagObj, index) => {
+        const vraagDiv = document.createElement("div");
+        vraagDiv.className = "vraag";
+
+        const h2 = document.createElement("h2");
+        h2.textContent = vraagObj.vraag;
+        vraagDiv.appendChild(h2);
+
+        const antwoordDiv = document.createElement("div");
+        antwoordDiv.className = "antwoord";
+
+        vraagObj.opties.forEach(optie => {
+          const btn = document.createElement("button");
+          btn.className = optie.kleur;
+          btn.textContent = optie.tekst;
+          btn.onclick = function() {
+            controleerAntwoord(btn, vraagObj.juist);
+          };
+          antwoordDiv.appendChild(btn);
+        });
+
+        vraagDiv.appendChild(antwoordDiv);
+
+        const resultaatDiv = document.createElement("div");
+        resultaatDiv.className = "resultaat";
+        vraagDiv.appendChild(resultaatDiv);
+
+        container.appendChild(vraagDiv);
+      });
+    }
+
+    // Controleer antwoord functie (blijft hetzelfde)
     function controleerAntwoord(button, juistAntwoord) {
       const gekozen = button.textContent.toLowerCase().trim();
       const alleKnoppen = button.parentElement.querySelectorAll("button");
       const resultaatDiv = button.parentElement.parentElement.querySelector(".resultaat");
 
-      // Knoppen uitschakelen
+      // Knoppen uitschakelen na keuze
       alleKnoppen.forEach(btn => btn.disabled = true);
 
       if (gekozen === juistAntwoord.toLowerCase()) {
@@ -159,6 +254,20 @@
         resultaatDiv.textContent = "❌ Dat is niet goed.";
         resultaatDiv.style.color = "red";
       }
+    }
+
+    // Functie om nieuwe vragen te laden, wisselt tussen sets
+    function laadNieuweVragen() {
+      huidigeSetIndex++;
+      if (huidigeSetIndex >= vraagSets.length) {
+        huidigeSetIndex = 0; // terug naar eerste set
+      }
+      laadVragen(vraagSets[huidigeSetIndex]);
+    }
+
+    // Initial load
+    window.onload = function() {
+      laadVragen(vraagSets[huidigeSetIndex]);
     }
   </script>
 </body>
