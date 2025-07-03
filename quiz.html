@@ -2,171 +2,150 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Markus' Kahoot Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f0f8ff;
+      color: #333;
+    }
+
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
       text-align: center;
+      border-bottom: 4px solid #388e3c;
     }
 
-    h1 {
-      background-color: #6a0dad;
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
       color: white;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    main {
       padding: 20px;
-      margin: 0;
+      max-width: 800px;
+      margin: auto;
     }
 
-    .quiz-container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: white;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    }
-
-    .question {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    .answers {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .answer-btn {
-      background-color: #eee;
-      border: none;
-      font-size: 18px;
+    .vraag {
+      margin-bottom: 30px;
+      background-color: white;
       padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .vraag img {
+      max-width: 100%;
+      height: auto;
       border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      margin-top: 10px;
     }
 
-    .answer-btn:hover {
-      background-color: #d1d1d1;
+    .vraag h2 {
+      margin-top: 0;
     }
 
-    .correct {
-      background-color: #28a745 !important;
-      color: white;
-    }
-
-    .incorrect {
-      background-color: #dc3545 !important;
-      color: white;
-    }
-
-    #next-btn {
-      margin-top: 20px;
-      padding: 12px 24px;
-      font-size: 18px;
-      background-color: #6a0dad;
+    .vraag button {
+      display: block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #009688;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
+      font-size: 1em;
       cursor: pointer;
-      display: none;
     }
 
-    #score {
-      margin-top: 20px;
-      font-size: 20px;
+    .vraag button:hover {
+      background-color: #00796b;
+    }
+
+    .resultaat {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      color: #555;
+      font-size: 0.9em;
     }
   </style>
 </head>
 <body>
-  <h1>Markus' Kahoot Quiz</h1>
-  <div class="quiz-container">
-    <div class="question" id="question">Vraag komt hier...</div>
-    <div class="answers" id="answers"></div>
-    <button id="next-btn">Volgende</button>
-    <div id="score"></div>
-  </div>
+  <header>
+    <h1>Quiz</h1>
+    <nav>
+      <a href="index.html">🏠 Home</a>
+    </nav>
+  </header>
+
+  <main id="quiz-container">
+    <!-- Vraag 1 -->
+    <div class="vraag">
+      <h2>Wat voor dier is dit?</h2>
+      <img src="https://cdn.pixabay.com/photo/2017/01/14/12/59/frog-1971230_960_720.jpg" alt="Kikker">
+      <button onclick="controleerAntwoord(this, 'kikker')">Kikker</button>
+      <button onclick="controleerAntwoord(this, 'hond')">Hond</button>
+      <button onclick="controleerAntwoord(this, 'kat')">Kat</button>
+      <div class="resultaat"></div>
+    </div>
+
+    <!-- Vraag 2 -->
+    <div class="vraag">
+      <h2>Welk vervoermiddel zie je hier?</h2>
+      <img src="https://cdn.pixabay.com/photo/2014/04/03/10/32/train-311984_960_720.png" alt="Trein">
+      <button onclick="controleerAntwoord(this, 'auto')">Auto</button>
+      <button onclick="controleerAntwoord(this, 'fiets')">Fiets</button>
+      <button onclick="controleerAntwoord(this, 'trein')">Trein</button>
+      <div class="resultaat"></div>
+    </div>
+
+    <!-- Vraag 3 -->
+    <div class="vraag">
+      <h2>Wat is deze vrucht?</h2>
+      <img src="https://cdn.pixabay.com/photo/2016/07/22/09/59/apple-1534476_960_720.jpg" alt="Appel">
+      <button onclick="controleerAntwoord(this, 'peer')">Peer</button>
+      <button onclick="controleerAntwoord(this, 'banaan')">Banaan</button>
+      <button onclick="controleerAntwoord(this, 'appel')">Appel</button>
+      <div class="resultaat"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Markus. Alle rechten voorbehouden.</p>
+  </footer>
 
   <script>
-    const quizData = [
-      {
-        question: "Wat is het grootste dier op aarde?",
-        answers: ["Olifant", "Blauwe vinvis", "Giraf", "Haaien"],
-        correct: 1
-      },
-      {
-        question: "Hoeveel poten heeft een spin?",
-        answers: ["6", "8", "10", "12"],
-        correct: 1
-      },
-      {
-        question: "Wat krijg je als je 7 + 8 doet?",
-        answers: ["14", "15", "16", "17"],
-        correct: 1
-      }
-    ];
+    function controleerAntwoord(button, correct) {
+      const gekozen = button.textContent.toLowerCase();
+      const resultaatDiv = button.parentElement.querySelector('.resultaat');
+      const alleKnoppen = button.parentElement.querySelectorAll('button');
 
-    let currentQuestion = 0;
-    let score = 0;
+      // Disable alle knoppen
+      alleKnoppen.forEach(btn => btn.disabled = true);
 
-    const questionEl = document.getElementById("question");
-    const answersEl = document.getElementById("answers");
-    const nextBtn = document.getElementById("next-btn");
-    const scoreEl = document.getElementById("score");
-
-    function loadQuestion() {
-      const current = quizData[currentQuestion];
-      questionEl.textContent = current.question;
-      answersEl.innerHTML = "";
-      nextBtn.style.display = "none";
-
-      current.answers.forEach((answer, index) => {
-        const btn = document.createElement("button");
-        btn.classList.add("answer-btn");
-        btn.textContent = answer;
-        btn.addEventListener("click", () => checkAnswer(index, btn));
-        answersEl.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(selectedIndex, btn) {
-      const correctIndex = quizData[currentQuestion].correct;
-      const allBtns = document.querySelectorAll(".answer-btn");
-
-      allBtns.forEach((b, i) => {
-        b.disabled = true;
-        if (i === correctIndex) b.classList.add("correct");
-        if (i === selectedIndex && i !== correctIndex) b.classList.add("incorrect");
-      });
-
-      if (selectedIndex === correctIndex) {
-        score++;
-      }
-
-      nextBtn.style.display = "inline-block";
-    }
-
-    nextBtn.addEventListener("click", () => {
-      currentQuestion++;
-      if (currentQuestion < quizData.length) {
-        loadQuestion();
+      if (gekozen === correct) {
+        resultaatDiv.textContent = "✅ Goed zo!";
+        resultaatDiv.style.color = "green";
       } else {
-        showScore();
+        resultaatDiv.textContent = "❌ Oeps, dat is niet goed.";
+        resultaatDiv.style.color = "red";
       }
-    });
-
-    function showScore() {
-      questionEl.textContent = "Klaar!";
-      answersEl.innerHTML = "";
-      nextBtn.style.display = "none";
-      scoreEl.textContent = `Je hebt ${score} van de ${quizData.length} goed!`;
     }
-
-    loadQuestion();
   </script>
 </body>
 </html>
