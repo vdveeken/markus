@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markus' Kahoot Quiz</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      background-color: #6a0dad;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .answer-btn {
+      background-color: #eee;
+      border: none;
+      font-size: 18px;
+      padding: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .answer-btn:hover {
+      background-color: #d1d1d1;
+    }
+
+    .correct {
+      background-color: #28a745 !important;
+      color: white;
+    }
+
+    .incorrect {
+      background-color: #dc3545 !important;
+      color: white;
+    }
+
+    #next-btn {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Markus' Kahoot Quiz</h1>
+  <div class="quiz-container">
+    <div class="question" id="question">Vraag komt hier...</div>
+    <div class="answers" id="answers"></div>
+    <button id="next-btn">Volgende</button>
+    <div id="score"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Wat is het grootste dier op aarde?",
+        answers: ["Olifant", "Blauwe vinvis", "Giraf", "Haaien"],
+        correct: 1
+      },
+      {
+        question: "Hoeveel poten heeft een spin?",
+        answers: ["6", "8", "10", "12"],
+        correct: 1
+      },
+      {
+        question: "Wat krijg je als je 7 + 8 doet?",
+        answers: ["14", "15", "16", "17"],
+        correct: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const nextBtn = document.getElementById("next-btn");
+    const scoreEl = document.getElementById("score");
+
+    function loadQuestion() {
+      const current = quizData[currentQuestion];
+      questionEl.textContent = current.question;
+      answersEl.innerHTML = "";
+      nextBtn.style.display = "none";
+
+      current.answers.forEach((answer, index) => {
+        const btn = document.createElement("button");
+        btn.classList.add("answer-btn");
+        btn.textContent = answer;
+        btn.addEventListener("click", () => checkAnswer(index, btn));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedIndex, btn) {
+      const correctIndex = quizData[currentQuestion].correct;
+      const allBtns = document.querySelectorAll(".answer-btn");
+
+      allBtns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === correctIndex) b.classList.add("correct");
+        if (i === selectedIndex && i !== correctIndex) b.classList.add("incorrect");
+      });
+
+      if (selectedIndex === correctIndex) {
+        score++;
+      }
+
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    function showScore() {
+      questionEl.textContent = "Klaar!";
+      answersEl.innerHTML = "";
+      nextBtn.style.display = "none";
+      scoreEl.textContent = `Je hebt ${score} van de ${quizData.length} goed!`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
